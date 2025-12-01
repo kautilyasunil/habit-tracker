@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - My Habit Tracker</title>
+    
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f4f8;
+        }
+        .login-container {
+            max-width: 400px;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #1a73e8;
+            margin-bottom: 20px;
+        }
+        /* FirebaseUI widget style can be customized further */
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <h1>Habit Tracker Login</h1>
+        <div id="firebaseui-auth-container"></div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
+
+    <script src="config.js"></script>
+
+    <script>
+        // Initialize the FirebaseUI Widget using Firebase.
+        const ui = new firebaseui.auth.AuthUI(firebase.auth());
+
+        const uiConfig = {
+            // successful sign-in के बाद उपयोगकर्ता को index.html पर रीडायरेक्ट करें
+            signInSuccessUrl: 'index.html', 
+            signInOptions: [
+                // यहां लॉगिन विकल्प जोड़ें। उदाहरण के लिए:
+                firebase.auth.EmailAuthProvider.PROVIDER_ID, // Email/Password
+                firebase.auth.GoogleAuthProvider.PROVIDER_ID, // Google Login
+                // आप अपनी पसंद के अन्य प्रदाता भी जोड़ सकते हैं
+            ],
+            tosUrl: 'privacy.html', // Terms of Service (वैकल्पिक)
+            privacyPolicyUrl: 'privacy.html' // Privacy Policy (वैकल्पिक)
+        };
+
+        // Start the FirebaseUI widget.
+        ui.start('#firebaseui-auth-container', uiConfig);
+    </script>
+</body>
+</html>
