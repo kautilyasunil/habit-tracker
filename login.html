@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Your App</title>
+    <title>Login - Habit Tracker</title>
     <style>
         * {
             margin: 0;
@@ -36,8 +36,8 @@
 
         .login-header h1 {
             color: #333;
-            font-size: 28px;
-            margin-bottom: 10px;
+            font-size: 26px;
+            margin-bottom: 8px;
         }
 
         .login-header p {
@@ -46,237 +46,193 @@
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .form-group label {
             display: block;
             color: #333;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-size: 14px;
         }
 
         .form-group input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 10px 12px;
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 14px;
-            transition: border-color 0.3s;
+            transition: border-color 0.2s;
         }
 
         .form-group input:focus {
             outline: none;
             border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .form-options {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            font-size: 13px;
-        }
-
-        .form-options a {
-            color: #667eea;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .form-options a:hover {
-            color: #764ba2;
-        }
-
-        .checkbox-wrapper {
-            display: flex;
-            align-items: center;
-        }
-
-        .checkbox-wrapper input {
-            margin-right: 6px;
-            cursor: pointer;
-        }
-
-        .checkbox-wrapper label {
-            margin: 0;
-            font-weight: 400;
-            color: #666;
-            cursor: pointer;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12);
         }
 
         .login-btn {
             width: 100%;
-            padding: 12px;
+            padding: 11px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.15s, box-shadow 0.15s;
+            margin-top: 6px;
         }
 
         .login-btn:hover {
-            transform: translateY(-2px);
+            transform: translateY(-1px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
         .login-btn:active {
             transform: translateY(0);
+            box-shadow: none;
         }
 
-        .signup-link {
-            text-align: center;
-            margin-top: 20px;
-            color: #666;
-            font-size: 14px;
+        .links-row {
+            margin-top: 14px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
         }
 
+        .links-row a,
         .signup-link a {
             color: #667eea;
             text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s;
+            font-weight: 500;
         }
 
+        .links-row a:hover,
         .signup-link a:hover {
             color: #764ba2;
+        }
+
+        .signup-link {
+            margin-top: 16px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
         }
 
         .error-message {
             background-color: #fee;
             border: 1px solid #fcc;
             color: #c33;
-            padding: 10px;
+            padding: 9px;
             border-radius: 5px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             display: none;
             font-size: 13px;
-        }
-
-        @media (max-width: 480px) {
-            .login-container {
-                padding: 30px 20px;
-                margin: 20px;
-            }
-
-            .login-header h1 {
-                font-size: 24px;
-            }
         }
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="login-header">
-            <h1>Welcome Back</h1>
-            <p>Login to your account</p>
+            <h1>Habit Tracker Login</h1>
+            <p>Login to see your habits</p>
         </div>
 
         <div class="error-message" id="errorMessage"></div>
 
         <form id="loginForm">
             <div class="form-group">
-                <label for="email">Email Address</label>
-                <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
+                <label for="email">Email address</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
                     placeholder="Enter your email"
                     required
                 >
             </div>
 
             <div class="form-group">
-                <label for="password">Password</label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    name="password" 
-                    placeholder="Enter your password (Max 8 characters)"
+                <label for="password">Password (max 8 characters)</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
                     maxlength="8"
+                    placeholder="Enter your password"
                     required
                 >
             </div>
 
+            <button type="submit" class="login-btn">Login</button>
 
-
-                        <div class="form-options">
-                <a href="forgot-password.html">Forgot password?</a> 
+            <div class="links-row">
+                <a href="forgot-password.html">Forgot password?</a>
+                <a href="signup.html">Sign up</a>
             </div>
-<button type="submit" class="login-btn">Login</button>
+
+            <div class="signup-link">
+                New user? <a href="signup.html">Create an account</a>
+            </div>
         </form>
-
-        <div class="signup-link">
-            Don't have an account? 
-            <a href="signup.html">Sign up here</a> 
-        </div>
-
-
     </div>
-    
+
+    <!-- Firebase scripts (same versions as index.html) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="config.js"></script>
 
     <script>
-        // Check if user is already logged in
-        firebase.auth().onAuthStateChanged(user => {
+        // अगर already login है तो सीधे app पर भेज दो
+        firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
-                // If logged in, redirect to main app immediately
-                window.location.href = 'new3.html'; 
+                window.location.href = 'index.html';
             }
         });
 
-        // Login form handling
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        // Login form submit
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errorDiv = document.getElementById('errorMessage');
-            errorDiv.style.display = 'none'; // Hide previous errors
+            var email = document.getElementById('email').value.trim();
+            var password = document.getElementById('password').value;
+            var errorDiv = document.getElementById('errorMessage');
 
-            // Basic validation
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+
             if (!email || !password) {
-                errorDiv.textContent = 'कृपया सभी fields भरें।';
+                errorDiv.textContent = 'Please fill in both email and password.';
                 errorDiv.style.display = 'block';
                 return;
             }
 
-            // Email validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                errorDiv.textContent = 'कृपया एक सही email address दर्ज करें।';
+            if (password.length > 8) {
+                errorDiv.textContent = 'Password must be maximum 8 characters.';
                 errorDiv.style.display = 'block';
                 return;
             }
 
-            // Firebase Login Call
             firebase.auth().signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // Login Successful! Redirect to the main app page
-                    window.location.href = 'new3.html'; 
+                .then(function () {
+                    window.location.href = 'index.html';
                 })
-                .catch((error) => {
-                    // Login Failed
-                    let message = 'Login failed. Please check your credentials.';
-                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-                        message = 'Invalid email or password.';
+                .catch(function (error) {
+                    var msg = 'Login failed. Please check your email and password.';
+                    if (error.code === 'auth/user-not-found' ||
+                        error.code === 'auth/wrong-password' ||
+                        error.code === 'auth/invalid-credential') {
+                        msg = 'Invalid email or password.';
                     } else if (error.code === 'auth/too-many-requests') {
-                        message = 'Too many failed login attempts. Try again later.';
+                        msg = 'Too many attempts. Try again later.';
                     }
-                    errorDiv.textContent = message;
+                    errorDiv.textContent = msg;
                     errorDiv.style.display = 'block';
-                    console.error('Firebase Login Error:', error);
+                    console.error(error);
                 });
-        });
-
-
         });
     </script>
 </body>
