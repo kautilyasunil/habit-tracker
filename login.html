@@ -197,26 +197,26 @@
                     type="password" 
                     id="password" 
                     name="password" 
-                    placeholder="Enter your password"
+                    placeholder="Enter your password (Max 8 characters)"
+                    maxlength="8"
                     required
                 >
             </div>
 
-            <div class="form-options">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="rememberMe" name="rememberMe">
-                    <label for="rememberMe">Remember me</label>
-                </div>
+
+
+                        <div class="form-options">
                 <a href="forgot-password.html">Forgot password?</a> 
             </div>
-
-            <button type="submit" class="login-btn">Login</button>
+<button type="submit" class="login-btn">Login</button>
         </form>
 
         <div class="signup-link">
             Don't have an account? 
             <a href="signup.html">Sign up here</a> 
         </div>
+
+
     </div>
     
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -276,25 +276,7 @@
                 });
         });
 
-        // Remember me functionality (Kept from original code)
-        document.addEventListener('DOMContentLoaded', function() {
-            const emailInput = document.getElementById('email');
-            const rememberMeCheckbox = document.getElementById('rememberMe');
 
-            // Retrieve saved email if exists
-            const savedEmail = localStorage.getItem('savedEmail');
-            if (savedEmail) {
-                emailInput.value = savedEmail;
-                rememberMeCheckbox.checked = true;
-            }
-
-            rememberMeCheckbox.addEventListener('change', function() {
-                if (this.checked) {
-                    localStorage.setItem('savedEmail', emailInput.value);
-                } else {
-                    localStorage.removeItem('savedEmail');
-                }
-            });
         });
     </script>
 </body>
