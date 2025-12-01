@@ -1,48 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
-    <script>
-        // Simple Menu + Logout logic
-        (function(){
-          var menuBtn = document.getElementById('menuBtn');
-          var sidebar = document.getElementById('sidebar');
-          var overlay = document.getElementById('overlay');
-          var closeBtn = document.getElementById('closeBtn');
-          var logoutBtn = document.getElementById('logoutBtn');
-          var profileBtn = document.getElementById('profileBtn');
-
-          function openMenu(){
-            if(sidebar) sidebar.style.left = '0';
-            if(overlay) overlay.style.display = 'block';
-          }
-          function closeMenu(){
-            if(sidebar) sidebar.style.left = '-280px';
-            if(overlay) overlay.style.display = 'none';
-          }
-
-          if(menuBtn){ menuBtn.onclick = openMenu; }
-          if(closeBtn){ closeBtn.onclick = closeMenu; }
-          if(overlay){ overlay.onclick = closeMenu; }
-
-          if(logoutBtn){
-            logoutBtn.onclick = function(){
-              if (firebase && firebase.auth){
-                firebase.auth().signOut().then(function(){
-                  window.location.href = 'login.html';
-                }).catch(function(e){ alert('Logout error: '+e.message); });
-              }
-            };
-          }
-
-          if(profileBtn){
-            profileBtn.onclick = function(){
-              alert('Profile editing coming soon!');
-              closeMenu();
-            };
-          }
-        })();
-    </script>
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1185,7 +1142,35 @@
 
     <script src="config.js">
 
-        
+        // Logout button function
+        function insertLogoutButton() {
+          var container = document.getElementById('logout-container');
+          if (!container) return;
+          const btn = document.createElement('button');
+          btn.textContent = 'Logout';
+          btn.style.background = 'red';
+          btn.style.color = 'white';
+          btn.style.border = 'none';
+          btn.style.padding = '6px 18px';
+          btn.style.borderRadius = '5px';
+          btn.style.fontWeight = 'bold';
+          btn.style.cursor = 'pointer';
+          btn.style.fontSize = '14px';
+          btn.onclick = function() {
+              firebase.auth().signOut().then(() => {
+                window.location.href = 'login.html';
+              }).catch((error) => {
+                alert('Logout error: ' + error.message);
+              });
+          };
+          container.appendChild(btn);
+        }
+
+        // Initialize logout button when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+          insertLogoutButton();
+        });
+</script>
 
 <footer style="margin-top: 24px; text-align: center; font-size: 12px; opacity: 0.7;">
   <a href="about.html">About / Contact</a> |
