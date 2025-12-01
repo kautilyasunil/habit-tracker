@@ -7,6 +7,7 @@
     <style>
         /* Design System Variables */
         :root {
+            /* ... (आपका पूरा CSS कोड यहां वैसा ही रहेगा) ... */
             --color-white: rgba(255, 255, 255, 1);
             --color-black: rgba(0, 0, 0, 1);
             --color-cream-50: rgba(252, 252, 249, 1);
@@ -98,8 +99,11 @@
             color: var(--color-text);
             padding: var(--space-20);
             line-height: 1.5;
+            /* Hide content until authenticated */
+            display: none; 
         }
-
+        
+        /* ... (CSS का शेष भाग यहां वैसा ही रहेगा) ... */
         .container {
             max-width: 100%;
             margin: 0 auto;
@@ -402,7 +406,24 @@
             background: var(--color-surface);
             color: var(--color-text);
         }
-
+        
+        /* Logout Button Style */
+        .logout-btn {
+            padding: var(--space-8) var(--space-16);
+            background-color: var(--color-red-500);
+            color: white;
+            border: none;
+            border-radius: var(--radius-base);
+            cursor: pointer;
+            font-size: var(--font-size-base);
+            font-weight: 500;
+            transition: background-color 0.2s;
+            font-family: var(--font-family-base);
+            margin-left: 10px; /* Adjust spacing */
+        }
+        .logout-btn:hover {
+            background-color: var(--color-red-400);
+        }
     </style>
 </head>
 <body>
@@ -432,7 +453,7 @@
                 <div class="overall-progress" id="overallProgress">Overall: 0%</div>
                 <div class="motivational-msg" id="motivationalMsg">Keep going! 💪</div>
                 <button class="clear-btn" id="clearBtn">Clear All</button>
-            </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button> </div>
         </div>
 
         <div class="tracker-wrapper">
@@ -462,70 +483,72 @@
             { id: 9, name: 'Goal Journaling', emoji: '✍️' }
         ];
 
-        const weeks = [
-            { week: 1, days: [1, 2, 3, 4, 5, 6, 7] },
-            { week: 2, days: [8, 9, 10, 11, 12, 13, 14] },
-            { week: 3, days: [15, 16, 17, 18, 19, 20, 21] },
-            { week: 4, days: [22, 23, 24, 25, 26, 27, 28] },
-            { week: 5, days: [29, 30] }
-        ];
-
         const daysInMonth = 30;
         let totalHabits; 
 
-        // State management (in-memory)
-        let habitState = {};
-        // New state for habit names in the CURRENT month/year
-        let currentHabits = []; 
+        // New global state variables for Firebase
+        let currentUser = null; // Will store the logged-in Firebase user
+        let habitState = {};    // Checkbox state (in-memory)
+        let currentHabits = []; // Habit names for the CURRENT month/year
+        
+        // Date state (current month/year)
         let currentMonth = 10; // November (0-indexed)
         let currentYear = new Date().getFullYear();
-        let todayDate = 23; // Current date in November
+        let todayDate = new Date().getDate(); 
 
 
-        // --- Habit Name Persistence Logic ---
+        // --- Firebase Database Functions ---
 
-        // Function to get the month-specific storage key
-        function getMonthHabitKey(month, year) {
-            return `habitNames-v1-${month}-${year}`;
+        function getHabitNamesRef() {
+            if (!currentUser) return null;
+            const monthKey = `habitNames-v1/${currentMonth}-${currentYear}`;
+            return firebase.database().ref(`users/${currentUser.uid}/${monthKey}`);
         }
 
-        // Initialize habits array based on month/year
+        function getHabitStateRef() {
+            if (!currentUser) return null;
+            const monthKey = `habitState-v1/${currentMonth}-${currentYear}`;
+            return firebase.database().ref(`users/${currentUser.uid}/${monthKey}`);
+        }
+
+        // Initialize habits array (Names) based on month/year from RTDB
         function initializeHabits() {
-            const monthKey = getMonthHabitKey(currentMonth, currentYear);
-            const savedNames = localStorage.getItem(monthKey);
-            
-            if (savedNames) {
-                // 1. Current month के लिए नाम सेव हैं, उन्हें लोड करो।
-                try {
-                    currentHabits = JSON.parse(savedNames);
-                } catch (e) {
-                    console.error('Failed to parse saved habit names', e);
-                    // Fallback: अगर parsing fail होती है, तो default habits का इस्तेमाल करो।
-                    currentHabits = JSON.parse(JSON.stringify(defaultHabits)); 
-                }
-            } else {
-                // 2. Current month के लिए नाम सेव नहीं हैं, default habits का इस्तेमाल करो।
-                // Deep copy of default habits.
-                currentHabits = JSON.parse(JSON.stringify(defaultHabits)); 
+            const ref = getHabitNamesRef();
+            if (!ref) return;
+
+            ref.once('value').then(snapshot => {
+                const savedNames = snapshot.val();
                 
-                // IMPORTANT: Save defaults immediately for the current month so they aren't loaded again on reload,
-                // and any future changes are applied to this month's data.
-                saveHabitNames(); 
-            }
-            
-            totalHabits = currentHabits.length;
+                if (savedNames) {
+                    // Load names from Firebase
+                    currentHabits = savedNames;
+                } else {
+                    // No names saved, use defaults and save them to Firebase
+                    currentHabits = JSON.parse(JSON.stringify(defaultHabits)); 
+                    saveHabitNames(); // Save defaults immediately
+                }
+                
+                totalHabits = currentHabits.length;
+                
+                // Now that names are loaded, load the state (checkboxes)
+                loadHabitState(); 
+            }).catch(error => {
+                console.error("Error loading habit names:", error);
+            });
         }
 
-        // Save habit names for the CURRENT month/year
+        // Save habit names for the CURRENT month/year to RTDB
         function saveHabitNames() {
-            const monthKey = getMonthHabitKey(currentMonth, currentYear);
-            localStorage.setItem(monthKey, JSON.stringify(currentHabits));
+            const ref = getHabitNamesRef();
+            if (!ref) return;
+            // The entire currentHabits array is saved under the monthKey
+            ref.set(currentHabits)
+                .catch(error => console.error("Error saving habit names:", error));
         }
 
-        // Function to initialize the habit state (checkboxes)
+        // Initialize/Reset the habit state (checkboxes) locally
         function initializeState() {
             habitState = {};
-            // State initialization MUST use currentHabits (which holds the month's names)
             currentHabits.forEach(habit => { 
                 habitState[habit.id] = {};
                 for (let day = 1; day <= daysInMonth; day++) {
@@ -533,42 +556,42 @@
                 }
             });
         }
-
-
-        // ---- LocalStorage persistence for Checkboxes ----
-
+        
+        // Save checkbox state to RTDB
         function saveHabitState() {
-            const monthKey = `habitState-v1-${currentMonth}-${currentYear}`;
-            localStorage.setItem(monthKey, JSON.stringify(habitState));
+            const ref = getHabitStateRef();
+            if (!ref) return;
+            ref.set(habitState)
+                .catch(error => console.error("Error saving habit state:", error));
         }
 
+        // Load checkbox state from RTDB
         function loadHabitState() {
-            const monthKey = `habitState-v1-${currentMonth}-${currentYear}`;
-            const saved = localStorage.getItem(monthKey);
-            if (saved) {
-                try {
-                    const tempState = JSON.parse(saved);
-                    
-                    // Check if habit IDs in saved state match currentHabits IDs (important for data consistency)
-                    const loadedIds = Object.keys(tempState).map(id => parseInt(id));
-                    const currentIds = currentHabits.map(habit => habit.id);
-
-                    if (loadedIds.length === currentIds.length && 
-                        loadedIds.every(id => currentIds.includes(id))) {
-                        habitState = tempState;
-                        return;
-                    }
-                } catch (e) {
-                    console.error('Failed to parse saved habit state', e);
-                }
+            const ref = getHabitStateRef();
+            if (!ref) {
+                 initializeState(); // Fallback if no user is set
+                 return;
             }
-            // If no saved state or IDs don't match, initialize fresh state for the month
-            initializeState();
+
+            ref.once('value').then(snapshot => {
+                const savedState = snapshot.val();
+                if (savedState) {
+                    habitState = savedState;
+                } else {
+                    initializeState(); // Fresh month, fresh state
+                    // No need to save immediately, wait for first toggle
+                }
+                // Once data is loaded/initialized, render the UI
+                generateGrid();
+                updateUI();
+            }).catch(error => {
+                console.error("Error loading habit state:", error);
+                initializeState();
+            });
         }
 
         // Toggle checkbox
         function toggleCheckbox(habitId, day) {
-            // Safety check: ensure habitId exists in the state
             if (!habitState[habitId]) {
                 console.error(`Habit ID ${habitId} not found in state.`);
                 return;
@@ -578,10 +601,12 @@
             updateUI();
         }
 
-        // Calculate statistics for a habit
+        // ... (The rest of the helper functions: calculateHabitStats, calculateDailyProgress, 
+        // calculateOverallProgress, getMotivationalMessage, isWeekend, getMonthName, drawChart) ...
+        
+        
         function calculateHabitStats(habitId) {
             let completed = 0;
-            // Check if habitId exists in habitState before iterating
             if (!habitState[habitId]) return { completed: 0, progress: 0 }; 
 
             for (let day = 1; day <= daysInMonth; day++) {
@@ -591,24 +616,20 @@
             return { completed, progress };
         }
 
-        // Calculate daily progress
         function calculateDailyProgress(day) {
             let completed = 0;
-            currentHabits.forEach(habit => { // Use currentHabits
-                // Check if habitState and habitState[habit.id] are initialized
+            currentHabits.forEach(habit => { 
                 if (habitState[habit.id] && habitState[habit.id][day]) completed++;
             });
-            // Use totalHabits for calculation
             return totalHabits === 0 ? 0 : Math.round((completed / totalHabits) * 100); 
         }
 
-        // Calculate overall progress
         function calculateOverallProgress() {
             let totalChecked = 0;
-            let totalPossible = totalHabits * daysInMonth; // Use totalHabits
+            let totalPossible = totalHabits * daysInMonth; 
             if (totalPossible === 0) return 0;
             
-            currentHabits.forEach(habit => { // Use currentHabits
+            currentHabits.forEach(habit => { 
                 for (let day = 1; day <= daysInMonth; day++) {
                     if (habitState[habit.id] && habitState[habit.id][day]) totalChecked++;
                 }
@@ -616,7 +637,6 @@
             return Math.round((totalChecked / totalPossible) * 100);
         }
 
-        // Get motivational message
         function getMotivationalMessage(progress) {
             if (progress <= 30) return 'Keep going! 💪';
             if (progress <= 60) return 'Good progress! 🌟';
@@ -624,18 +644,23 @@
             return 'Amazing dedication! 🏆';
         }
 
-        // Check if day is weekend (6th and 7th day of each week)
         function isWeekend(day) {
             const weekendDays = [6, 7, 13, 14, 20, 21, 27, 28];
             return weekendDays.includes(day);
         }
+        
+        function getMonthName(monthIndex) {
+            const months = ['January', 'February', 'March', 'April', 'May', 'June',
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+            return months[monthIndex];
+        }
 
         // Generate the tracker grid
         function generateGrid() {
+            // ... (GenerateGrid function is the same, but uses currentHabits) ...
             const grid = document.getElementById('trackerGrid');
             grid.innerHTML = '';
             
-            // Dynamically set the grid columns based on the number of days in the month
             grid.style.gridTemplateColumns = `200px repeat(${daysInMonth}, 50px) 100px 80px 150px`;
 
             // Header row - Week labels (Adjusted for 30 days)
@@ -700,7 +725,7 @@
             }
 
             // Habit rows
-            currentHabits.forEach(habit => { // Use currentHabits
+            currentHabits.forEach(habit => { 
                 // Habit name cell
                 const habitCell = document.createElement('div');
                 habitCell.className = 'cell habit-cell';
@@ -727,11 +752,10 @@
                             newName = habit.name;
                         }
                         
-                        // *** THE KEY CHANGE: Update the name in the currentHabits array AND save it ***
                         const habitToUpdate = currentHabits.find(h => h.id === habit.id);
                         if(habitToUpdate) {
                             habitToUpdate.name = newName;
-                            saveHabitNames(); // Save the updated list of names for the current month
+                            saveHabitNames(); // Save the updated list of names to Firebase
                         }
                         
                         habitCell.innerHTML = `${habit.emoji} ${newName}`;
@@ -826,8 +850,8 @@
 
         // Update UI after state change
         function updateUI() {
-            // Update checkboxes and their background colors
-            currentHabits.forEach(habit => { // Use currentHabits
+            // ... (UpdateUI function is the same, now works with RTDB state) ...
+            currentHabits.forEach(habit => { 
                 for (let day = 1; day <= daysInMonth; day++) {
                     const checkbox = document.getElementById(`habit-${habit.id}-day-${day}`);
                     if (checkbox) {
@@ -841,7 +865,6 @@
                     }
                 }
 
-                // Update stats
                 const stats = calculateHabitStats(habit.id);
                 const completedEl = document.getElementById(`completed-${habit.id}`);
                 const progressEl = document.getElementById(`progress-${habit.id}`);
@@ -852,7 +875,6 @@
                 if (barEl) barEl.style.width = `${stats.progress}%`;
             });
 
-            // Update daily progress
             for (let day = 1; day <= daysInMonth; day++) {
                 const dailyProgress = calculateDailyProgress(day);
                 const dailyEl = document.getElementById(`daily-${day}`);
@@ -865,19 +887,17 @@
                 }
             }
 
-            // Update overall progress
             const overallProgress = calculateOverallProgress();
             document.getElementById('overallProgress').textContent = `Overall: ${overallProgress}%`;
             document.getElementById('motivationalMsg').textContent = getMotivationalMessage(overallProgress);
 
-            // Update chart
             drawChart();
         }
-
+        
         // Draw trend chart
         function drawChart() {
             const canvas = document.getElementById('trendChart');
-            if (!canvas) return; // Safety check
+            if (!canvas) return; 
             const ctx = canvas.getContext('2d');
             
             // Set canvas size
@@ -977,15 +997,13 @@
             }
         }
 
-        // Helper function to get month name
-        function getMonthName(monthIndex) {
-            const months = ['January', 'February', 'March', 'April', 'May', 'June',
-                          'July', 'August', 'September', 'October', 'November', 'December'];
-            return months[monthIndex];
-        }
-
-        // Clear data with two options - Current Month or All Data
+        // Clear data function (Updated to clear Firebase data)
         function clearAll() {
+            if (!currentUser) {
+                alert('Please login first.');
+                return;
+            }
+
             const choice = confirm(
                 'What do you want to clear?\n\n' +
                 'OK = Clear Current Month (' + getMonthName(currentMonth) + ' ' + currentYear + ')\n' +
@@ -994,49 +1012,64 @@
 
             if (choice === true) {
                 // Clear only current month's checkboxes AND reset habit names to default for current month
-                initializeState(); // Resets habitState to empty
-                saveHabitState();
                 
-                // Reset habit names for the current month to defaultHabits
-                currentHabits = JSON.parse(JSON.stringify(defaultHabits));
-                saveHabitNames(); 
-                
-                generateGrid(); // Regenerate grid with default names
-                updateUI();
-                alert('✅ ' + getMonthName(currentMonth) + ' ' + currentYear + ' cleared!');
-            } else {
-                // Clear all data - ask for confirmation
-                const confirmAll = confirm(
-                    '⚠️ This will delete ALL saved data (Habits Names & Checkboxes)!\n\n' +
-                    'Are you sure? (This cannot be undone)'
-                );
-                if (confirmAll) {
-                    // Clear all localStorage data
-                    const keys = Object.keys(localStorage);
-                    keys.forEach(key => {
-                        // Clear both habit state and habit names across all months/years
-                        if (key.startsWith('habitState-v1-') || key.startsWith('habitNames-v1-')) { 
-                            localStorage.removeItem(key);
-                        }
-                    });
-                    // Reset in-memory state
-                    initializeHabits(); // Will load defaults and save them for the current month
+                // 1. Clear Checkbox State in RTDB
+                const stateRef = getHabitStateRef();
+                stateRef.remove().then(() => {
+                    // 2. Reset habit names to default in RTDB
+                    currentHabits = JSON.parse(JSON.stringify(defaultHabits));
+                    saveHabitNames(); 
+                    
+                    // 3. Reset local state and UI
                     initializeState();
                     generateGrid();
                     updateUI();
-                    alert('✅ All data deleted! Fresh start!');
+                    alert('✅ ' + getMonthName(currentMonth) + ' ' + currentYear + ' cleared!');
+                }).catch(error => {
+                    alert('Error clearing current month data: ' + error.message);
+                });
+
+            } else {
+                // Clear all data - ask for confirmation
+                const confirmAll = confirm(
+                    '⚠️ This will delete ALL saved data (Habits Names & Checkboxes) for all months!\n\n' +
+                    'Are you sure? (This cannot be undone)'
+                );
+                if (confirmAll) {
+                    // Clear all data under the user's UID in the 'users' node
+                    const userRef = firebase.database().ref(`users/${currentUser.uid}`);
+                    userRef.remove().then(() => {
+                        // Reset local state
+                        currentHabits = JSON.parse(JSON.stringify(defaultHabits));
+                        initializeState();
+                        // Re-initialize to save new defaults
+                        initializeHabits(); 
+                        generateGrid();
+                        updateUI();
+                        alert('✅ All data deleted! Fresh start!');
+                    }).catch(error => {
+                        alert('Error clearing all data: ' + error.message);
+                    });
                 }
             }
+        }
+        
+        // Logout function
+        function logout() {
+            firebase.auth().signOut().then(() => {
+                // Redirects to login page after sign out
+                window.location.href = 'login.html'; 
+            }).catch((error) => {
+                console.error("Logout failed:", error);
+            });
         }
 
         // Initialize year input with current year
         function populateYearSelector() {
             const yearInput = document.getElementById('yearSelector');
-            // Set to current year if no value is set, or if the stored value is out of range
             const currentYearVal = new Date().getFullYear();
             yearInput.value = currentYearVal;
             currentYear = currentYearVal;
-            // Set the month selector to the current month as well
             document.getElementById('monthSelector').value = new Date().getMonth();
             currentMonth = new Date().getMonth();
         }
@@ -1046,50 +1079,50 @@
             const inputValue = document.getElementById('yearSelector').value;
             if (inputValue && inputValue >= 1900 && inputValue <= 2100) {
                 currentYear = parseInt(inputValue);
-                // Load the month-specific names for the new year
-                initializeHabits(); 
-                // Load the checkbox state for the new month/year
-                loadHabitState();
-                generateGrid();
-                updateUI();
-                drawChart();
+                initializeHabits(); // Triggers loadHabitState
             }
         }
 
         // Month selector change
         function changeMonth() {
             currentMonth = parseInt(document.getElementById('monthSelector').value);
-            // Load the month-specific names for the new month
-            initializeHabits(); 
-            // Load the checkbox state for the new month/year
-            loadHabitState();
-            generateGrid();
-            updateUI();
-            drawChart();
+            initializeHabits(); // Triggers loadHabitState
         }
 
 
-        // Initialize the app
-        function init() {
+        // Final App Initialization (called after successful authentication)
+        function initApp() {
+            document.body.style.display = 'block'; // Show the tracker now
+            
             populateYearSelector();
-            initializeHabits(); // Load names FIRST (from month-specific localstorage or defaults)
-            loadHabitState();   // Load state based on currentHabits IDs
-            generateGrid();
-            updateUI();
+            initializeHabits(); // Start the data loading chain from RTDB
             
             // Event listeners
             document.getElementById('clearBtn').addEventListener('click', clearAll);
+            document.getElementById('logoutBtn').addEventListener('click', logout); // NEW LISTENER
             document.getElementById('monthSelector').addEventListener('change', changeMonth);
             document.getElementById('yearSelector').addEventListener('input', changeYear);
             document.getElementById('yearSelector').addEventListener('change', changeYear);
             
             // Redraw chart on window resize
-            window.addEventListener('resize', () => {
-                drawChart();
+            window.addEventListener('resize', drawChart);
+        }
+
+        // Global Initialization (The new entry point with Auth Guard)
+        function init() {
+            firebase.auth().onAuthStateChanged(user => {
+                if (user) {
+                    // User is signed in. Set global user object.
+                    currentUser = user; 
+                    initApp(); // Proceed with app initialization
+                } else {
+                    // User is signed out. Redirect to login page.
+                    window.location.href = 'login.html';
+                }
             });
         }
 
-        // Start the app when DOM is ready
+        // Start the Auth Check
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', init);
         } else {
