@@ -46,110 +46,76 @@
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .form-group label {
-            display: block;
-            color: #333;
-            font-weight: 600;
-            margin-bottom: 8px;
+            display:block; 
+            color: #333; 
+            margin-bottom: 5px; 
+            font-weight: 500; 
             font-size: 14px;
         }
 
         .form-group input {
             width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
+            padding: 10px;
+            border: 1px solid #ccc;
             border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .password-hint {
-            font-size: 12px;
-            color: #999;
-            margin-top: 5px;
+            font-size: 16px;
         }
 
         .signup-btn {
             width: 100%;
             padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #667eea;
             color: white;
             border: none;
             border-radius: 5px;
+            cursor: pointer;
             font-size: 16px;
             font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 10px;
+            transition: background 0.3s;
         }
 
         .signup-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            background: #5a66d0;
         }
-
-        .signup-btn:active {
-            transform: translateY(0);
-        }
-
+        
         .login-link {
             text-align: center;
-            margin-top: 20px;
-            color: #666;
+            margin-top: 30px;
             font-size: 14px;
+            color: #666;
         }
 
         .login-link a {
-            color: #667eea;
+            color: #764ba2;
             text-decoration: none;
             font-weight: 600;
-            transition: color 0.3s;
         }
 
         .login-link a:hover {
-            color: #764ba2;
+            text-decoration: underline;
         }
 
+        .error-message, .success-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+        }
         .error-message {
-            background-color: #fee;
-            border: 1px solid #fcc;
-            color: #c33;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: none;
-            font-size: 13px;
+            background-color: #fdd;
+            color: #d9534f;
+            border: 1px solid #d9534f;
         }
-
         .success-message {
-            background-color: #efe;
-            border: 1px solid #cfc;
-            color: #3c3;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: none;
-            font-size: 13px;
-        }
-
-        @media (max-width: 480px) {
-            .signup-container {
-                padding: 30px 20px;
-                margin: 20px;
-            }
-
-            .signup-header h1 {
-                font-size: 24px;
-            }
+            background-color: #dff0d8;
+            color: #3c763d;
+            border: 1px solid #d6e9c6;
         }
     </style>
 </head>
@@ -157,103 +123,54 @@
     <div class="signup-container">
         <div class="signup-header">
             <h1>Create Account</h1>
-            <p>Join Habit Tracker today</p>
+            <p>Start tracking your habits today!</p>
         </div>
-
-        <div class="error-message" id="errorMessage"></div>
-        <div class="success-message" id="successMessage"></div>
+        
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
 
         <form id="signupForm">
             <div class="form-group">
                 <label for="email">Email Address</label>
-                <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
-                    placeholder="Enter your email"
-                    required
-                >
+                <input type="email" id="email" required>
             </div>
-
             <div class="form-group">
-                <label for="password">Password</label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    name="password" 
-                    placeholder="Create password"
-                    maxlength="8"
-                    required
-                >
-                <div class="password-hint">Maximum 8 characters</div>
+                <label for="password">Password (Max 8 characters)</label>
+                <input type="password" id="password" maxlength="8" required>
             </div>
-
             <div class="form-group">
                 <label for="confirmPassword">Confirm Password</label>
-                <input 
-                    type="password" 
-                    id="confirmPassword" 
-                    name="confirmPassword" 
-                    placeholder="Confirm password"
-                    maxlength="8"
-                    required
-                >
+                <input type="password" id="confirmPassword" maxlength="8" required>
             </div>
-
-            <button type="submit" class="signup-btn">Create Account</button>
+            
+            <button type="submit" class="signup-btn">Sign Up</button>
         </form>
 
         <div class="login-link">
-            Already have an account? 
-            <a href="login.html">Login here</a> 
+            Already have an account? <a href="login-final.html">Login here</a>
         </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="config.js"></script>
-
+    
     <script>
-        // Check if user is already logged in
-        firebase.auth().onAuthStateChanged(user => {
-            if (user) {
-                // If already logged in, redirect to main app
-                window.location.href = 'index.html';
-            }
-        });
-
-        // Signup form handling
-        document.getElementById('signupForm').addEventListener('submit', function(e) {
+        document.getElementById('signupForm').addEventListener('submit', function (e) {
             e.preventDefault();
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            const errorDiv = document.getElementById('errorMessage');
-            const successDiv = document.getElementById('successMessage');
-
-            // Hide previous messages
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+            var confirmPassword = document.getElementById('confirmPassword').value;
+            var errorDiv = document.getElementById('errorMessage');
+            var successDiv = document.getElementById('successMessage');
+            
             errorDiv.style.display = 'none';
             successDiv.style.display = 'none';
+            errorDiv.textContent = '';
+            successDiv.textContent = '';
 
-            // Validation
             if (!email || !password || !confirmPassword) {
                 errorDiv.textContent = 'Please fill in all fields.';
-                errorDiv.style.display = 'block';
-                return;
-            }
-
-            // Email validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                errorDiv.textContent = 'Please enter a valid email address.';
-                errorDiv.style.display = 'block';
-                return;
-            }
-
-            // Password validation
-            if (password.length < 6) {
-                errorDiv.textContent = 'Password must be at least 6 characters.';
                 errorDiv.style.display = 'block';
                 return;
             }
