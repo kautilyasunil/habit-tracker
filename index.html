@@ -9,7 +9,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* हल्का, आकर्षक बैकग्राउंड */
             background: linear-gradient(135deg, #f3f4f6 0%, #e0e7ff 100%);
             min-height: 100vh;
             display: flex;
@@ -25,15 +24,14 @@
             max-width: 800px;
             padding: 40px;
             text-align: center;
-            /* शुरुआत में छिपा हुआ */
-            display: none; 
+            display: none; /* शुरुआत में छिपा हुआ */
         }
         h1 { color: #667eea; margin-bottom: 20px; }
         p { margin-bottom: 20px; font-size: 16px; }
         #userInfo { font-weight: 600; color: #764ba2; margin-bottom: 30px; }
         #logoutBtn {
             padding: 10px 20px;
-            background: #f44336; /* लाल रंग */
+            background: #f44336;
             color: white;
             border: none;
             border-radius: 5px;
@@ -41,9 +39,7 @@
             font-weight: 600;
             transition: background 0.3s;
         }
-        #logoutBtn:hover { 
-            background: #d32f2f; 
-        }
+        #logoutBtn:hover { background: #d32f2f; }
         /* लोडिंग स्क्रीन स्टाइलिंग */
         .loading-screen {
             font-size: 20px;
@@ -85,10 +81,10 @@
         dashboardContent.style.display = 'none';
         
         // ** Firebase सुरक्षा जाँच (Security Check) **
-        // Auth State बदलने पर यह फ़ंक्शन चलता है (जैसे: पेज लोड होने पर)
         firebase.auth().onAuthStateChanged(user => {
             if (!user) {
                 // 1. यदि उपयोगकर्ता लॉग इन नहीं है, तो तुरंत लॉगिन पेज पर रीडायरेक्ट करें
+                // रीडायरेक्ट लिंक को 'login-final.html' में बदला गया
                 window.location.href = 'login-final.html'; 
             } else {
                 // 2. उपयोगकर्ता लॉग इन है
