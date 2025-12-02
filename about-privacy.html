@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About & Privacy Policy - Habit Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn:hover {
+            background: #e8e8e8;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: white;
+        }
+
+        .content {
+            display: none;
+            padding: 30px 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #764ba2;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        p {
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .feature-list {
+            background: #f9f9f9;
+            padding: 15px 20px;
+            border-left: 4px solid #667eea;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .footer {
+            background: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            color: #888;
+            font-size: 0.9em;
+            border-top: 1px solid #ddd;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 1em;
+        }
+
+        .back-btn:hover {
+            background: #764ba2;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab-btn {
+                border-bottom: none;
+                border-right: 3px solid transparent;
+            }
+
+            .tab-btn.active {
+                border-bottom: none;
+                border-right-color: #667eea;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Habit Tracker</h1>
+            <p>About & Privacy Information</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('about')">About</button>
+            <button class="tab-btn" onclick="showTab('privacy')">Privacy Policy</button>
+        </div>
+
+        <!-- ABOUT TAB -->
+        <div id="about" class="content active">
+            <button class="back-btn" onclick="goBack()">← Back</button>
+
+            <h2>About Habit Tracker</h2>
+
+            <h3>What is Habit Tracker?</h3>
+            <p>Habit Tracker is a simple yet powerful web application designed to help you build and maintain positive habits. Whether you want to exercise regularly, read more, meditate, or track your financial goals, our app makes it easy to monitor your progress and stay motivated.</p>
+
+            <h3>Our Mission</h3>
+            <p>We believe that small daily habits lead to big life changes. Our mission is to provide you with an intuitive, user-friendly tool that helps you establish positive routines and track your consistency with ease.</p>
+
+            <h3>Key Features</h3>
+            <div class="feature-list">
+                <strong>Daily Habit Tracking:</strong> Log your habits every day and see your progress at a glance.
+            </div>
+            <div class="feature-list">
+                <strong>Monthly Progress:</strong> View your completion percentage for each month and identify patterns.
+            </div>
+            <div class="feature-list">
+                <strong>Customizable Habits:</strong> Add up to 11 custom habits that fit your lifestyle.
+            </div>
+            <div class="feature-list">
+                <strong>Secure Authentication:</strong> Your data is protected with secure login and password encryption.
+            </div>
+            <div class="feature-list">
+                <strong>Cross-Device Sync:</strong> Access your habits from any device with your account.
+            </div>
+            <div class="feature-list">
+                <strong>Light & Dark Theme:</strong> Choose your preferred theme for comfortable viewing.
+            </div>
+
+            <h3>How to Use</h3>
+            <ol>
+                <li>Create an account with your email and password</li>
+                <li>Add your daily habits (e.g., Exercise, Read, Meditate)</li>
+                <li>Check off habits as you complete them each day</li>
+                <li>View your monthly progress and stay motivated</li>
+                <li>Edit your profile or password anytime</li>
+            </ol>
+
+            <h3>Contact & Support</h3>
+            <p>For questions or support, please contact us at: <strong>support@habittracker.com</strong></p>
+
+            <h3>Version</h3>
+            <p>Current Version: 1.0.0</p>
+        </div>
+
+        <!-- PRIVACY POLICY TAB -->
+        <div id="privacy" class="content">
+            <button class="back-btn" onclick="goBack()">← Back</button>
+
+            <h2>Privacy Policy</h2>
+
+            <p><strong>Last Updated: December 2025</strong></p>
+
+            <h3>1. Introduction</h3>
+            <p>Welcome to Habit Tracker. We take your privacy seriously and are committed to protecting your personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our web application.</p>
+
+            <h3>2. Information We Collect</h3>
+            <p>We collect information you provide directly to us, including:</p>
+            <ul>
+                <li><strong>Account Information:</strong> First name, last name, email address, and username</li>
+                <li><strong>Authentication Data:</strong> Passwords (encrypted and never stored in plain text)</li>
+                <li><strong>Habit Data:</strong> Your custom habits and daily completion records</li>
+                <li><strong>Usage Information:</strong> How you interact with our application</li>
+            </ul>
+
+            <h3>3. How We Use Your Information</h3>
+            <p>We use the information we collect to:</p>
+            <ul>
+                <li>Create and manage your account</li>
+                <li>Authenticate you securely when you log in</li>
+                <li>Store and retrieve your habit tracking data</li>
+                <li>Sync your data across multiple devices</li>
+                <li>Improve and optimize our service</li>
+                <li>Respond to your inquiries and provide support</li>
+            </ul>
+
+            <h3>4. Data Security</h3>
+            <p>Your security is important to us. We implement industry-standard security measures to protect your data:</p>
+            <ul>
+                <li>Passwords are encrypted using secure hashing algorithms</li>
+                <li>All data is stored securely in Firebase Firestore</li>
+                <li>Data transmission is encrypted using HTTPS/SSL</li>
+                <li>We never store sensitive information like passwords in plain text or localStorage</li>
+                <li>Access to your data is restricted by authentication tokens</li>
+            </ul>
+
+            <h3>5. Data Storage</h3>
+            <p>Your data is stored using Firebase services, which includes:</p>
+            <ul>
+                <li><strong>Firebase Authentication:</strong> Securely manages your login credentials</li>
+                <li><strong>Cloud Firestore:</strong> Stores your habit data and user profile information</li>
+                <li><strong>Data Backup:</strong> Firebase automatically backs up your data</li>
+            </ul>
+
+            <h3>6. Third-Party Services</h3>
+            <p>We use the following third-party services to operate our application:</p>
+            <ul>
+                <li><strong>Firebase (Google):</strong> For authentication, database, and hosting services</li>
+            </ul>
+            <p>These services are bound by their own privacy policies. We encourage you to review Google's Privacy Policy for more information.</p>
+
+            <h3>7. Data Sharing</h3>
+            <p>We do not sell, trade, or rent your personal information to third parties. Your data is only shared with:</p>
+            <ul>
+                <li>Firebase (for storage and authentication)</li>
+                <li>Service providers who assist us in operating our website and conducting business</li>
+                <li>When required by law or legal process</li>
+            </ul>
+
+            <h3>8. Your Rights</h3>
+            <p>You have the right to:</p>
+            <ul>
+                <li>Access your personal data</li>
+                <li>Update or correct your information</li>
+                <li>Delete your account and associated data (contact support)</li>
+                <li>Opt-out of certain data collection practices</li>
+                <li>Request a copy of your data</li>
+            </ul>
+
+            <h3>9. Data Retention</h3>
+            <p>We retain your data for as long as your account is active. If you delete your account, we will securely delete your personal data within 30 days, except where we are required to retain it by law.</p>
+
+            <h3>10. Children's Privacy</h3>
+            <p>Habit Tracker is not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13. If we become aware that a child under 13 has provided us with personal information, we will delete such information and terminate the child's account.</p>
+
+            <h3>11. Cookies and Tracking</h3>
+            <p>Our application uses:</p>
+            <ul>
+                <li><strong>localStorage:</strong> To store your preferences (theme, language) locally on your device</li>
+                <li><strong>Session Tokens:</strong> To keep you logged in securely</li>
+            </ul>
+            <p>These technologies do not track you across the web and are used only to enhance your user experience.</p>
+
+            <h3>12. Changes to This Privacy Policy</h3>
+            <p>We may update this Privacy Policy from time to time. We will notify you of any significant changes by updating the "Last Updated" date at the top of this page. Your continued use of our application after changes constitutes your acceptance of the updated Privacy Policy.</p>
+
+            <h3>13. Contact Us</h3>
+            <p>If you have questions about this Privacy Policy or our privacy practices, please contact us at:</p>
+            <p><strong>Email:</strong> privacy@habittracker.com</p>
+            <p><strong>Response Time:</strong> We will respond to your inquiries within 7 business days.</p>
+
+            <h3>14. Legal Compliance</h3>
+            <p>This Privacy Policy complies with relevant data protection regulations including GDPR (General Data Protection Regulation) principles where applicable.</p>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2025 Habit Tracker. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all content
+            const contents = document.querySelectorAll('.content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        function goBack() {
+            // Go back to main app (replace with your actual app page)
+            window.location.href = 'app-clean.html';
+        }
+    </script>
+</body>
+</html>
