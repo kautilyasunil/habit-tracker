@@ -3,115 +3,1994 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Habit Tracker</title>
+    <title>My Habit Tracker</title>
     <style>
-        /* CSS को अन्य पेजों के साथ सुसंगत रखने के लिए */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* ============================================
+           DESIGN SYSTEM VARIABLES & BASE STYLES
+           ============================================ */
+        :root {
+            --color-cream-50: rgba(252, 252, 249, 1);
+            --color-cream-100: rgba(255, 255, 253, 1);
+            --color-slate-500: rgba(98, 108, 113, 1);
+            --color-slate-900: rgba(19, 52, 59, 1);
+            --color-teal-500: rgba(33, 128, 141, 1);
+            --color-teal-600: rgba(29, 116, 128, 1);
+            --color-teal-500-rgb: 33, 128, 141;
+            --color-slate-500-rgb: 98, 108, 113;
+
+            --color-background: var(--color-cream-50);
+            --color-surface: var(--color-cream-100);
+            --color-text: var(--color-slate-900);
+            --color-text-secondary: var(--color-slate-500);
+            --color-primary: var(--color-teal-500);
+            --color-primary-hover: var(--color-teal-600);
+
+            --color-header-bg: #e3f2fd;
+            --color-habit-bg: #f5f5f5;
+            --color-checked-bg: #d4edda;
+            --color-grid-border: #dee2e6;
+            --color-progress-green: #28a745;
+            --color-weekend-bg: #f8f9fa;
+
+            --font-family-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-size-base: 14px;
+            --font-size-lg: 16px;
+            --font-size-xl: 18px;
+            --font-size-3xl: 24px;
+
+            --space-8: 8px;
+            --space-12: 12px;
+            --space-16: 16px;
+            --space-20: 20px;
+            --space-24: 24px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f3f4f6 0%, #e0e7ff 100%);
-            min-height: 100vh;
-            display: flex;
+            font-family: var(--font-family-base);
+            background-color: var(--color-background);
+            color: var(--color-text);
+            padding: var(--space-20);
+            line-height: 1.5;
+        }
+
+        /* ============================================
+           LOGIN PAGE STYLES
+           ============================================ */
+        .login-container {
+            display: none;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: #333;
-        }
-        .dashboard-container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: var(--space-20);
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 800px;
-            padding: 40px;
-            text-align: center;
-            display: none; /* शुरुआत में छिपा हुआ */
+            height: 100%;
+            z-index: 10000;
         }
-        h1 { color: #667eea; margin-bottom: 20px; }
-        p { margin-bottom: 20px; font-size: 16px; }
-        #userInfo { font-weight: 600; color: #764ba2; margin-bottom: 30px; }
-        #logoutBtn {
-            padding: 10px 20px;
-            background: #f44336;
+
+        .login-container.active {
+            display: flex;
+        }
+
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .login-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .login-subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+            box-sizing: border-box;
+            font-family: var(--font-family-base);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            border-radius: 10px;
+            font-size: 15px;
             font-weight: 600;
-            transition: background 0.3s;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
         }
-        #logoutBtn:hover { background: #d32f2f; }
-        /* लोडिंग स्क्रीन स्टाइलिंग */
-        .loading-screen {
-            font-size: 20px;
-            color: #667eea;
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .error-msg {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c33;
+            display: none;
+            font-size: 13px;
+        }
+
+        .error-msg.show {
+            display: block;
+        }
+
+        .links-section {
+            margin-top: 20px;
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .forgot-password-btn {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 0;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .forgot-password-btn:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .signup-link {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .signup-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .signup-link a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .demo-credentials {
+            text-align: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            font-size: 11px;
+            color: #999;
+        }
+
+        /* ============================================
+           SIGNUP PAGE STYLES
+           ============================================ */
+        .signup-container {
+            display: none;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: var(--space-20);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+        }
+
+        .signup-container.active {
+            display: flex;
+        }
+
+        .signup-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .signup-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .back-link {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 0;
+            margin-bottom: 20px;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+        }
+
+        /* ============================================
+           FORGOT PASSWORD PAGE STYLES
+           ============================================ */
+        .forgot-container {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: var(--space-20);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+        }
+
+        .forgot-container.active {
+            display: flex;
+        }
+
+        .forgot-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .forgot-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .forgot-description {
+            text-align: center;
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 25px;
+        }
+
+        /* ============================================
+           PROFILE EDIT MODAL STYLES
+           ============================================ */
+        .profile-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 5000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-modal-overlay.active {
+            display: flex;
+        }
+
+        .profile-modal {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .profile-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+        }
+
+        .profile-modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .profile-modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .profile-modal-close:hover {
+            color: #333;
+        }
+
+        .profile-form-section {
+            margin-bottom: 25px;
+        }
+
+        .profile-form-section h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .profile-form-group {
+            margin-bottom: 15px;
+        }
+
+        .profile-form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #555;
+            font-size: 13px;
+        }
+
+        .profile-form-group input {
+            width: 100%;
+            padding: 11px 14px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: var(--font-family-base);
+        }
+
+        .profile-form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .profile-form-group input:disabled {
+            background: #f5f5f5;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .profile-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .profile-btn-save {
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .profile-btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .profile-btn-cancel {
+            padding: 12px;
+            background: #f0f0f0;
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .profile-btn-cancel:hover {
+            background: #e0e0e0;
+        }
+
+        .profile-success-msg {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+            display: none;
+            font-size: 13px;
+        }
+
+        .profile-success-msg.show {
+            display: block;
+        }
+
+        /* ============================================
+           DASHBOARD STYLES
+           ============================================ */
+        .dashboard-container {
+            display: none;
+        }
+
+        .dashboard-container.active {
+            display: block;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .header {
+            background-color: var(--color-header-bg);
+            padding: var(--space-24);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-24);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--space-16);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-16);
+            flex-wrap: wrap;
+        }
+
+        h1 {
+            font-size: var(--font-size-3xl);
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .month-selector {
+            padding: var(--space-8) var(--space-16);
+            font-size: var(--font-size-base);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: var(--color-surface);
+            color: var(--color-text);
+            cursor: pointer;
+            font-family: var(--font-family-base);
+        }
+
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: var(--space-20);
+            flex-wrap: wrap;
+        }
+
+        .overall-progress {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .motivational-msg {
+            font-size: var(--font-size-base);
+            font-weight: 500;
+            padding: var(--space-8) var(--space-16);
+            background-color: rgba(var(--color-teal-500-rgb), 0.1);
+            border-radius: 8px;
+            color: var(--color-primary);
+        }
+
+        .clear-btn {
+            padding: var(--space-8) var(--space-16);
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: var(--font-size-base);
+            font-weight: 500;
+            transition: background-color 0.2s;
+            font-family: var(--font-family-base);
+        }
+
+        .clear-btn:hover {
+            background-color: var(--color-primary-hover);
+        }
+
+        .tracker-wrapper {
+            background-color: var(--color-surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-16);
+            box-shadow: var(--shadow-md);
+            overflow-x: auto;
+            margin-bottom: var(--space-24);
+        }
+
+        .tracker-grid {
+            display: grid;
+            grid-template-columns: 200px repeat(30, 50px) 100px 80px 150px;
+            gap: 0;
+            min-width: fit-content;
+        }
+
+        .cell {
+            border: 1px solid var(--color-grid-border);
+            padding: var(--space-8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-base);
+            background-color: var(--color-surface);
+        }
+
+        .habit-cell {
+            background-color: var(--color-habit-bg);
+            font-weight: 500;
+            justify-content: flex-start;
+            padding-left: var(--space-12);
+            position: sticky;
+            left: 0;
+            z-index: 2;
+        }
+
+        .header-cell {
+            font-weight: 600;
+            background-color: var(--color-header-bg);
+            position: sticky;
+            top: 0;
+            z-index: 3;
+        }
+
+        .week-header {
+            grid-column: span 7;
+            background-color: var(--color-primary);
+            color: white;
+            font-weight: 600;
+            font-size: var(--font-size-base);
+            position: sticky;
+            top: 0;
+            z-index: 3;
+        }
+
+        .week-5-header {
+            grid-column: span 2;
+        }
+
+        .day-cell {
+            font-weight: 600;
+            font-size: var(--font-size-base);
+            background-color: var(--color-header-bg);
+            position: sticky;
+            top: 32px;
+            z-index: 3;
+        }
+
+        .weekend {
+            background-color: var(--color-weekend-bg);
+        }
+
+        .today-indicator {
+            background-color: rgba(var(--color-teal-500-rgb), 0.2) !important;
+            font-weight: 700;
+        }
+
+        .checkbox-cell {
+            cursor: pointer;
+            transition: background-color 0.2s;
+            position: relative;
+        }
+
+        .checkbox-cell:hover {
+            background-color: rgba(var(--color-teal-500-rgb), 0.05);
+        }
+
+        .checkbox-cell input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--color-progress-green);
+        }
+
+        .checkbox-cell.checked {
+            background-color: var(--color-checked-bg);
+        }
+
+        .stats-header {
+            font-weight: 600;
+            font-size: var(--font-size-base);
+            background-color: var(--color-header-bg);
+            position: sticky;
+            top: 32px;
+            z-index: 3;
+        }
+
+        .stats-cell {
+            font-size: var(--font-size-base);
+            font-weight: 500;
+        }
+
+        .progress-bar-cell {
+            padding: var(--space-4);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: var(--color-habit-bg);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--color-progress-green);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .daily-progress-label {
+            background-color: var(--color-habit-bg);
+            font-weight: 600;
+            position: sticky;
+            left: 0;
+            z-index: 2;
+        }
+
+        .daily-progress-cell {
+            font-weight: 600;
+            font-size: var(--font-size-base);
+        }
+
+        .daily-progress-cell.low {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .daily-progress-cell.medium {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .daily-progress-cell.high {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .chart-container {
+            background-color: var(--color-surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-24);
+            box-shadow: var(--shadow-md);
+            margin-bottom: var(--space-24);
+        }
+
+        .chart-title {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            margin-bottom: var(--space-16);
+            color: var(--color-text);
+        }
+
+        .chart-wrapper {
+            width: 100%;
+            height: 300px;
+            position: relative;
+        }
+
+        .habit-edit-input {
+            width: 100%;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            padding: 4px 6px;
+            font-size: var(--font-size-base);
+            background: var(--color-surface);
+            color: var(--color-text);
+        }
+
+        /* Sidebar Styles */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        #sidebar {
+            position: fixed;
+            left: -280px;
+            top: 0;
+            width: 280px;
             height: 100vh;
+            background: white;
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: left 0.3s;
+        }
+
+        #sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        #closeBtn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 26px;
+            cursor: pointer;
+        }
+
+        #profileBtn, #logoutBtn {
+            width: 100%;
+            padding: 15px 20px;
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background 0.2s;
+        }
+
+        #profileBtn:hover {
+            background: #f5f5f5;
+        }
+
+        #logoutBtn {
+            color: #d32f2f;
+            font-weight: 600;
+            border-top: 1px solid #eee;
+            margin-top: 10px;
+        }
+
+        #logoutBtn:hover {
+            background: #ffebee;
+        }
+
+        #menuBtn {
+            background: none;
+            border: none;
+            font-size: 26px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: all 0.2s;
+        }
+
+        #menuBtn:hover {
+            transform: scale(1.15);
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: var(--space-12);
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .header {
+                padding: var(--space-16);
+            }
+
+            .tracker-grid {
+                grid-template-columns: 150px repeat(30, 45px) 80px 70px 120px;
+            }
+
+            .habit-cell {
+                font-size: 11px;
+            }
+
+            .checkbox-cell input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-modal {
+                margin: 20px;
+            }
         }
     </style>
 </head>
 <body>
-    
-    <div class="loading-screen" id="loadingScreen">
-        Loading dashboard...
-    </div>
 
-    <div class="dashboard-container" id="dashboardContent">
-        <h1>Welcome to Habit Tracker!</h1>
-        <p>This is your personal dashboard, where your habits will be tracked.</p>
-        <p id="userInfo">You are logged in as: </p>
+<!-- ============================================
+     LOGIN PAGE
+     ============================================ -->
+<div id="loginContainer" class="login-container active">
+    <div class="login-card">
+        <h1 class="login-title">🚀 Habit Tracker</h1>
+        <p class="login-subtitle">Track your daily habits</p>
+        <div id="errorMsg" class="error-msg"></div>
+        
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input type="email" id="loginEmail" placeholder="your@email.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="loginPassword">Password (max 8 characters)</label>
+                <input type="password" id="loginPassword" placeholder="••••••••" maxlength="8" required>
+            </div>
+            
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+
+        <div class="links-section">
+            <button class="forgot-password-btn" onclick="showForgotPassword()">Forgot Password?</button>
+            <div class="signup-link">
+                New user? <a onclick="showSignup()">Sign Up</a>
+            </div>
+        </div>
+        
+        <div class="demo-credentials">
+            <strong>Demo Credentials:</strong><br>
+            test@example.com<br>
+            pass123
+        </div>
+    </div>
+</div>
+
+<!-- ============================================
+     SIGNUP PAGE
+     ============================================ -->
+<div id="signupContainer" class="signup-container">
+    <div class="signup-card">
+        <button class="back-link" onclick="showLogin()">← Back to Login</button>
+        <h1 class="signup-title">Create New Account</h1>
+        <div id="signupError" class="error-msg"></div>
+        
+        <form id="signupForm" onsubmit="handleSignup(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" placeholder="First Name" maxlength="30" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" placeholder="Last Name" maxlength="30" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="signupEmail">Email</label>
+                <input type="email" id="signupEmail" placeholder="your@email.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="signupPassword">Password (6-8 characters)</label>
+                <input type="password" id="signupPassword" placeholder="••••••••" minlength="6" maxlength="8" required>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" placeholder="••••••••" minlength="6" maxlength="8" required>
+            </div>
+            
+            <button type="submit" class="login-btn">Sign Up</button>
+        </form>
+    </div>
+</div>
+
+<!-- ============================================
+     FORGOT PASSWORD PAGE
+     ============================================ -->
+<div id="forgotContainer" class="forgot-container">
+    <div class="forgot-card">
+        <button class="back-link" onclick="showLogin()">← Back to Login</button>
+        <h1 class="forgot-title">Reset Your Password</h1>
+        <p class="forgot-description">Enter your email address. You'll receive a reset link.</p>
+        <div id="forgotError" class="error-msg"></div>
+        
+        <form id="forgotForm" onsubmit="handleForgotPassword(event)">
+            <div class="form-group">
+                <label for="resetEmail">Email</label>
+                <input type="email" id="resetEmail" placeholder="your@email.com" required>
+            </div>
+            
+            <button type="submit" class="login-btn">Send Reset Link</button>
+        </form>
+
+        <div class="demo-credentials">
+            <strong>Demo Purpose:</strong><br>
+            Enter any email address<br>
+            You'll receive a confirmation
+        </div>
+    </div>
+</div>
+
+<!-- ============================================
+     PROFILE EDIT MODAL
+     ============================================ -->
+<div id="profileModalOverlay" class="profile-modal-overlay">
+    <div class="profile-modal">
+        <div class="profile-modal-header">
+            <h2 class="profile-modal-title">Edit Profile</h2>
+            <button class="profile-modal-close" onclick="closeProfileModal()">×</button>
+        </div>
+
+        <div id="profileSuccessMsg" class="profile-success-msg"></div>
+
+        <form id="profileForm" onsubmit="handleProfileSave(event)">
+            <div class="profile-form-section">
+                <h3>Personal Information</h3>
+                
+                <div class="form-row">
+                    <div class="profile-form-group">
+                        <label for="profileFirstName">First Name</label>
+                        <input type="text" id="profileFirstName" placeholder="First Name" maxlength="30" required>
+                    </div>
+                    <div class="profile-form-group">
+                        <label for="profileLastName">Last Name</label>
+                        <input type="text" id="profileLastName" placeholder="Last Name" maxlength="30" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-form-section">
+                <h3>Account Information</h3>
+                
+                <div class="profile-form-group">
+                    <label for="profileEmail">Email Address</label>
+                    <input type="email" id="profileEmail" placeholder="your@email.com" disabled>
+                    <small style="color: #999; margin-top: 4px; display: block;">Contact support to change email</small>
+                </div>
+
+                <div class="profile-form-group">
+                    <label for="profileUsername">Username</label>
+                    <input type="text" id="profileUsername" placeholder="Username" maxlength="20" required>
+                </div>
+            </div>
+
+            <div class="profile-form-section">
+                <h3>Change Password</h3>
+                
+                <div class="profile-form-group">
+                    <label for="currentPassword">Current Password</label>
+                    <input type="password" id="currentPassword" placeholder="Current password" maxlength="8">
+                </div>
+
+                <div class="profile-form-group">
+                    <label for="newPassword">New Password (6-8 characters)</label>
+                    <input type="password" id="newPassword" placeholder="New password" maxlength="8" minlength="6">
+                </div>
+
+                <div class="profile-form-group">
+                    <label for="confirmNewPassword">Confirm New Password</label>
+                    <input type="password" id="confirmNewPassword" placeholder="Confirm password" maxlength="8" minlength="6">
+                </div>
+            </div>
+
+            <div class="profile-buttons">
+                <button type="submit" class="profile-btn-save">Save Changes</button>
+                <button type="button" class="profile-btn-cancel" onclick="closeProfileModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============================================
+     DASHBOARD PAGE
+     ============================================ -->
+<div id="dashboardContainer" class="dashboard-container">
+    <!-- Sidebar -->
+    <div id="overlay"></div>
+    <div id="sidebar">
+        <div class="sidebar-header">
+            Menu
+            <button id="closeBtn">×</button>
+        </div>
+        <button id="profileBtn">Edit Profile</button>
         <button id="logoutBtn">Logout</button>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    
-    <script src="config.js"></script>
+    <!-- Main Dashboard -->
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <button id="menuBtn">☰</button>
+                <h1>MY HABIT TRACKER</h1>
+                <select class="month-selector" id="monthSelector">
+                    <option value="0">January</option>
+                    <option value="1">February</option>
+                    <option value="2">March</option>
+                    <option value="3">April</option>
+                    <option value="4">May</option>
+                    <option value="5">June</option>
+                    <option value="6">July</option>
+                    <option value="7">August</option>
+                    <option value="8">September</option>
+                    <option value="9">October</option>
+                    <option value="10" selected>November</option>
+                    <option value="11">December</option>
+                </select>
+                <input type="number" class="month-selector" id="yearSelector" min="1900" max="2100" step="1" placeholder="Year" style="width: 90px; text-align: center;">
+            </div>
 
-    <script>
-        const loadingScreen = document.getElementById('loadingScreen');
-        const dashboardContent = document.getElementById('dashboardContent');
-        const userInfo = document.getElementById('userInfo');
-        const logoutBtn = document.getElementById('logoutBtn');
+            <div class="header-stats">
+                <div class="overall-progress" id="overallProgress">Overall: 0%</div>
+                <div class="motivational-msg" id="motivationalMsg">Keep going!</div>
+                <button class="clear-btn" id="clearBtn">Clear All</button>
+            </div>
+        </div>
 
-        // शुरुआत में, लोडिंग दिखाएँ
-        loadingScreen.style.display = 'flex';
-        dashboardContent.style.display = 'none';
+        <!-- Tracker Grid -->
+        <div class="tracker-wrapper">
+            <div class="tracker-grid" id="trackerGrid"></div>
+        </div>
+
+        <!-- Chart -->
+        <div class="chart-container">
+            <div class="chart-title">Monthly Progress Trend</div>
+            <div class="chart-wrapper">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================
+     SCRIPTS
+     ============================================ -->
+<script>
+    // ============================================
+    // PAGE NAVIGATION
+    // ============================================
+    function showLogin() {
+        document.getElementById('loginContainer').classList.add('active');
+        document.getElementById('signupContainer').classList.remove('active');
+        document.getElementById('forgotContainer').classList.remove('active');
+    }
+
+    function showSignup() {
+        document.getElementById('loginContainer').classList.remove('active');
+        document.getElementById('signupContainer').classList.add('active');
+        document.getElementById('forgotContainer').classList.remove('active');
+    }
+
+    function showForgotPassword() {
+        document.getElementById('loginContainer').classList.remove('active');
+        document.getElementById('signupContainer').classList.remove('active');
+        document.getElementById('forgotContainer').classList.add('active');
+    }
+
+    // ============================================
+    // PROFILE EDIT MODAL
+    // ============================================
+    function openProfileModal() {
+        const userEmail = localStorage.getItem('userEmail') || 'test@example.com';
+        const userName = localStorage.getItem('userName') || 'Demo User';
+        const [firstName = 'Demo', lastName = 'User'] = userName.split(' ');
+        const username = localStorage.getItem('username') || firstName.toLowerCase();
+
+        document.getElementById('profileFirstName').value = firstName;
+        document.getElementById('profileLastName').value = lastName;
+        document.getElementById('profileEmail').value = userEmail;
+        document.getElementById('profileUsername').value = username;
+        document.getElementById('currentPassword').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmNewPassword').value = '';
+
+        document.getElementById('profileModalOverlay').classList.add('active');
+    }
+
+    function closeProfileModal() {
+        document.getElementById('profileModalOverlay').classList.remove('active');
+        document.getElementById('profileSuccessMsg').classList.remove('show');
+    }
+
+    function handleProfileSave(event) {
+        event.preventDefault();
+
+        const firstName = document.getElementById('profileFirstName').value.trim();
+        const lastName = document.getElementById('profileLastName').value.trim();
+        const username = document.getElementById('profileUsername').value.trim();
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+        // Validation
+        if (!firstName || !lastName || !username) {
+            alert('Please fill all required fields');
+            return;
+        }
+
+        // Password change validation
+        if (newPassword || confirmNewPassword) {
+            if (!currentPassword) {
+                alert('Please enter current password');
+                return;
+            }
+            if (newPassword !== confirmNewPassword) {
+                alert('New passwords do not match');
+                return;
+            }
+            if (newPassword.length < 6) {
+                alert('New password must be at least 6 characters');
+                return;
+            }
+        }
+
+        // Save data to localStorage
+        localStorage.setItem('userName', `${firstName} ${lastName}`);
+        localStorage.setItem('username', username);
+
+        if (newPassword) {
+            localStorage.setItem('userPassword', newPassword);
+        }
+
+        // Show success message
+        const successMsg = document.getElementById('profileSuccessMsg');
+        successMsg.textContent = 'Profile successfully updated!';
+        successMsg.classList.add('show');
+
+        setTimeout(() => {
+            closeProfileModal();
+        }, 1500);
+    }
+
+    // ============================================
+    // LOGIN LOGIC
+    // ============================================
+    function handleLogin(event) {
+        event.preventDefault();
         
-        // ** Firebase सुरक्षा जाँच (Security Check) **
-        firebase.auth().onAuthStateChanged(user => {
-            if (!user) {
-                // 1. यदि उपयोगकर्ता लॉग इन नहीं है, तो तुरंत लॉगिन पेज पर रीडायरेक्ट करें
-                // रीडायरेक्ट लिंक को 'login-final.html' में बदला गया
-                window.location.href = 'login-final.html'; 
-            } else {
-                // 2. उपयोगकर्ता लॉग इन है
-                
-                // लोडिंग स्क्रीन छिपाएँ और डैशबोर्ड दिखाएँ
-                loadingScreen.style.display = 'none';
-                dashboardContent.style.display = 'block';
-                
-                // उपयोगकर्ता की जानकारी प्रदर्शित करें
-                userInfo.textContent = 'You are logged in as: ' + user.email;
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        const errorDiv = document.getElementById('errorMsg');
+        
+        errorDiv.classList.remove('show');
+        
+        if (!email || !password) {
+            showLoginError('Please fill in both email and password');
+            return;
+        }
+        
+        if (password.length < 6) {
+            showLoginError('Password must be at least 6 characters');
+            return;
+        }
+        
+        if (password.length > 8) {
+            showLoginError('Password must be maximum 8 characters');
+            return;
+        }
+        
+        // Demo login validation
+        if (email === 'test@example.com' && password === 'pass123') {
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userEmail', email);
+            showDashboard();
+        } else {
+            showLoginError('Invalid email or password. Try: test@example.com / pass123');
+        }
+    }
 
-                // ** लॉगआउट फ़ंक्शन **
-                // 3. Logout बटन पर क्लिक होने पर
-                logoutBtn.addEventListener('click', () => {
-                    firebase.auth().signOut()
-                        .then(() => {
-                            // सफलतापूर्वक लॉगआउट होने पर,
-                            // onAuthStateChanged फ़ंक्शन फिर से चलेगा और login-final.html पर रीडायरेक्ट करेगा
-                            console.log('User logged out successfully.');
-                        })
-                        .catch((error) => {
-                            console.error('Logout failed:', error);
-                            alert('Logout failed. Please try again.');
-                        });
-                });
+    function showLoginError(message) {
+        const errorDiv = document.getElementById('errorMsg');
+        errorDiv.textContent = message;
+        errorDiv.classList.add('show');
+        setTimeout(() => {
+            errorDiv.classList.remove('show');
+        }, 5000);
+    }
+
+    // ============================================
+    // SIGNUP LOGIC
+    // ============================================
+    function handleSignup(event) {
+        event.preventDefault();
+        
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+        const email = document.getElementById('signupEmail').value.trim();
+        const password = document.getElementById('signupPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const errorDiv = document.getElementById('signupError');
+        
+        errorDiv.classList.remove('show');
+        
+        if (!firstName || !lastName || !email || !password || !confirmPassword) {
+            showSignupError('Please fill all fields');
+            return;
+        }
+        
+        if (password !== confirmPassword) {
+            showSignupError('Passwords do not match');
+            return;
+        }
+        
+        if (password.length < 6) {
+            showSignupError('Password must be at least 6 characters');
+            return;
+        }
+        
+        // Demo signup
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('userName', `${firstName} ${lastName}`);
+        
+        alert(`Welcome ${firstName}! Your account has been created. Redirecting to dashboard...`);
+        showDashboard();
+    }
+
+    function showSignupError(message) {
+        const errorDiv = document.getElementById('signupError');
+        errorDiv.textContent = message;
+        errorDiv.classList.add('show');
+        setTimeout(() => {
+            errorDiv.classList.remove('show');
+        }, 5000);
+    }
+
+    // ============================================
+    // FORGOT PASSWORD LOGIC
+    // ============================================
+    function handleForgotPassword(event) {
+        event.preventDefault();
+        
+        const email = document.getElementById('resetEmail').value.trim();
+        const errorDiv = document.getElementById('forgotError');
+        
+        errorDiv.classList.remove('show');
+        
+        if (!email) {
+            showForgotError('Please enter your email');
+            return;
+        }
+        
+        // Demo forgot password
+        alert(`Reset link sent to: ${email}\n\nFor demo: Change password to 'reset123'`);
+        showLogin();
+    }
+
+    function showForgotError(message) {
+        const errorDiv = document.getElementById('forgotError');
+        errorDiv.textContent = message;
+        errorDiv.classList.add('show');
+        setTimeout(() => {
+            errorDiv.classList.remove('show');
+        }, 5000);
+    }
+
+    // ============================================
+    // DASHBOARD LOGIC
+    // ============================================
+
+    // Sidebar Toggle
+    const menuBtn = document.getElementById('menuBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const closeBtn = document.getElementById('closeBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const profileBtn = document.getElementById('profileBtn');
+
+    function toggleSidebar() {
+        sidebar.classList.add('open');
+        overlay.style.display = 'block';
+    }
+
+    function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.style.display = 'none';
+    }
+
+    menuBtn.onclick = toggleSidebar;
+    closeBtn.onclick = closeSidebar;
+    overlay.onclick = closeSidebar;
+    logoutBtn.onclick = logout;
+    profileBtn.onclick = openProfileModal;
+
+    function logout() {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('userName');
+        showLogin();
+    }
+
+    function showDashboard() {
+        document.getElementById('loginContainer').classList.remove('active');
+        document.getElementById('signupContainer').classList.remove('active');
+        document.getElementById('forgotContainer').classList.remove('active');
+        document.getElementById('dashboardContainer').classList.add('active');
+        closeSidebar();
+        init();
+    }
+
+    // Default Habits
+    const defaultHabits = [
+        { id: 1, name: 'Wake up at 05:00', emoji: '🌅' },
+        { id: 2, name: 'Gym', emoji: '💪' },
+        { id: 3, name: 'Reading/Learning', emoji: '📚' },
+        { id: 4, name: 'Open Demat', emoji: '📈' },
+        { id: 5, name: 'Budget Tracking', emoji: '💰' },
+        { id: 6, name: 'Study', emoji: '📖' },
+        { id: 7, name: 'No Alcohol', emoji: '🚫' },
+        { id: 8, name: 'Social Media Detox', emoji: '📵' },
+        { id: 9, name: 'Goal Journaling', emoji: '📝' }
+    ];
+
+    const daysInMonth = 30;
+    let totalHabits = 9;
+    let habitState = {};
+    let currentHabits = [];
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+    let todayDate = new Date().getDate();
+
+    // ============================================
+    // MONTH-SPECIFIC STORAGE LOGIC
+    // ============================================
+
+    function getMonthHabitKey(month, year) {
+        return `habitNames-v1-${month}-${year}`;
+    }
+
+    function initializeHabits() {
+        const monthKey = getMonthHabitKey(currentMonth, currentYear);
+        const savedNames = localStorage.getItem(monthKey);
+
+        if (savedNames) {
+            try {
+                currentHabits = JSON.parse(savedNames);
+            } catch (e) {
+                currentHabits = JSON.parse(JSON.stringify(defaultHabits));
+            }
+        } else {
+            currentHabits = JSON.parse(JSON.stringify(defaultHabits));
+            saveHabitNames();
+        }
+
+        totalHabits = currentHabits.length;
+    }
+
+    function saveHabitNames() {
+        const monthKey = getMonthHabitKey(currentMonth, currentYear);
+        localStorage.setItem(monthKey, JSON.stringify(currentHabits));
+    }
+
+    // ============================================
+    // CHECKBOX STATE LOGIC
+    // ============================================
+
+    function initializeState() {
+        habitState = {};
+        currentHabits.forEach(habit => {
+            habitState[habit.id] = {};
+            for (let day = 1; day <= daysInMonth; day++) {
+                habitState[habit.id][day] = false;
             }
         });
-    </script>
+    }
+
+    function saveHabitState() {
+        const monthKey = `habitState-v1-${currentMonth}-${currentYear}`;
+        localStorage.setItem(monthKey, JSON.stringify(habitState));
+    }
+
+    function loadHabitState() {
+        const monthKey = `habitState-v1-${currentMonth}-${currentYear}`;
+        const saved = localStorage.getItem(monthKey);
+
+        if (saved) {
+            try {
+                const tempState = JSON.parse(saved);
+                const loadedIds = Object.keys(tempState).map(id => parseInt(id));
+                const currentIds = currentHabits.map(habit => habit.id);
+
+                if (loadedIds.length === currentIds.length && loadedIds.every(id => currentIds.includes(id))) {
+                    habitState = tempState;
+                    return;
+                }
+            } catch (e) {
+                console.error('Failed to parse saved habit state', e);
+            }
+        }
+
+        initializeState();
+    }
+
+    // ============================================
+    // CALCULATION FUNCTIONS
+    // ============================================
+
+    function calculateHabitStats(habitId) {
+        let completed = 0;
+
+        if (!habitState[habitId]) return { completed: 0, progress: 0 };
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            if (habitState[habitId][day]) completed++;
+        }
+
+        const progress = Math.round((completed / daysInMonth) * 100);
+        return { completed, progress };
+    }
+
+    function calculateDailyProgress(day) {
+        let completed = 0;
+
+        currentHabits.forEach(habit => {
+            if (habitState[habit.id] && habitState[habit.id][day]) {
+                completed++;
+            }
+        });
+
+        return totalHabits > 0 ? Math.round((completed / totalHabits) * 100) : 0;
+    }
+
+    function calculateOverallProgress() {
+        let totalChecked = 0;
+        let totalPossible = totalHabits * daysInMonth;
+
+        if (totalPossible === 0) return 0;
+
+        currentHabits.forEach(habit => {
+            for (let day = 1; day <= daysInMonth; day++) {
+                if (habitState[habit.id] && habitState[habit.id][day]) {
+                    totalChecked++;
+                }
+            }
+        });
+
+        return Math.round((totalChecked / totalPossible) * 100);
+    }
+
+    function getMotivationalMessage(progress) {
+        if (progress <= 30) return 'Keep going!';
+        if (progress <= 60) return 'Good progress!';
+        if (progress <= 80) return 'Great work!';
+        return 'Amazing dedication!';
+    }
+
+    function isWeekend(day) {
+        const weekendDays = [6, 7, 13, 14, 20, 21, 27, 28];
+        return weekendDays.includes(day);
+    }
+
+    function toggleCheckbox(habitId, day) {
+        if (!habitState[habitId]) return;
+
+        habitState[habitId][day] = !habitState[habitId][day];
+        saveHabitState();
+        updateUI();
+    }
+
+    // ============================================
+    // GRID GENERATION
+    // ============================================
+
+    function generateGrid() {
+        const grid = document.getElementById('trackerGrid');
+        grid.innerHTML = '';
+        grid.style.gridTemplateColumns = `200px repeat(${daysInMonth}, 50px) 100px 80px 150px`;
+
+        // Week headers
+        const weekHeaders = [
+            { span: 7, text: 'Week 1' },
+            { span: 7, text: 'Week 2' },
+            { span: 7, text: 'Week 3' },
+            { span: 7, text: 'Week 4' },
+            { span: 2, text: 'Week 5' }
+        ];
+
+        const emptyCorner = document.createElement('div');
+        emptyCorner.className = 'cell header-cell';
+        emptyCorner.textContent = 'Habits';
+        grid.appendChild(emptyCorner);
+
+        weekHeaders.forEach(header => {
+            const weekHeader = document.createElement('div');
+            weekHeader.className = 'cell week-header';
+            if (header.text.includes('5')) weekHeader.classList.add('week-5-header');
+            weekHeader.style.gridColumn = `span ${header.span}`;
+            weekHeader.textContent = header.text;
+            grid.appendChild(weekHeader);
+        });
+
+        // Stats headers
+        ['Completed', 'Progress', 'Progress Bar'].forEach(text => {
+            const header = document.createElement('div');
+            header.className = 'cell stats-header';
+            header.textContent = text;
+            grid.appendChild(header);
+        });
+
+        // Day numbers
+        const habitCorner = document.createElement('div');
+        habitCorner.className = 'cell header-cell';
+        grid.appendChild(habitCorner);
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayCell = document.createElement('div');
+            dayCell.className = 'cell day-cell';
+            if (isWeekend(day)) dayCell.classList.add('weekend');
+            if (day === todayDate && currentMonth === new Date().getMonth() && currentYear === new Date().getFullYear()) {
+                dayCell.classList.add('today-indicator');
+            }
+            dayCell.textContent = day;
+            grid.appendChild(dayCell);
+        }
+
+        for (let i = 0; i < 3; i++) {
+            const emptyCell = document.createElement('div');
+            emptyCell.className = 'cell header-cell';
+            grid.appendChild(emptyCell);
+        }
+
+        // Habit rows
+        currentHabits.forEach(habit => {
+            // Habit name
+            const habitCell = document.createElement('div');
+            habitCell.className = 'cell habit-cell';
+            habitCell.innerHTML = `${habit.emoji} ${habit.name}`;
+
+            habitCell.addEventListener('dblclick', () => {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = habit.name;
+                input.className = 'habit-edit-input';
+                habitCell.innerHTML = '';
+                habitCell.appendChild(input);
+                input.focus();
+                input.select();
+
+                const finishEdit = () => {
+                    let newName = input.value.trim();
+                    if (newName.length > 30) newName = newName.slice(0, 30);
+                    if (!newName) newName = habit.name;
+
+                    const habitToUpdate = currentHabits.find(h => h.id === habit.id);
+                    if (habitToUpdate) {
+                        habitToUpdate.name = newName;
+                        saveHabitNames();
+                    }
+
+                    habitCell.innerHTML = `${habit.emoji} ${newName}`;
+                };
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') finishEdit();
+                });
+
+                input.addEventListener('blur', finishEdit);
+            });
+
+            grid.appendChild(habitCell);
+
+            // Checkboxes
+            for (let day = 1; day <= daysInMonth; day++) {
+                const checkboxCell = document.createElement('div');
+                checkboxCell.className = 'cell checkbox-cell';
+                if (isWeekend(day)) checkboxCell.classList.add('weekend');
+                if (day === todayDate && currentMonth === new Date().getMonth() && currentYear === new Date().getFullYear()) {
+                    checkboxCell.classList.add('today-indicator');
+                }
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = `habit-${habit.id}-day-${day}`;
+                checkbox.checked = habitState[habit.id] ? habitState[habit.id][day] : false;
+                checkbox.addEventListener('change', () => toggleCheckbox(habit.id, day));
+
+                checkboxCell.appendChild(checkbox);
+
+                if (habitState[habit.id] && habitState[habit.id][day]) {
+                    checkboxCell.classList.add('checked');
+                }
+
+                grid.appendChild(checkboxCell);
+            }
+
+            // Stats
+            const stats = calculateHabitStats(habit.id);
+
+            const completedCell = document.createElement('div');
+            completedCell.className = 'cell stats-cell';
+            completedCell.id = `completed-${habit.id}`;
+            completedCell.textContent = stats.completed;
+            grid.appendChild(completedCell);
+
+            const progressCell = document.createElement('div');
+            progressCell.className = 'cell stats-cell';
+            progressCell.id = `progress-${habit.id}`;
+            progressCell.textContent = stats.progress + '%';
+            grid.appendChild(progressCell);
+
+            const progressBarCell = document.createElement('div');
+            progressBarCell.className = 'cell progress-bar-cell';
+            const progressBar = document.createElement('div');
+            progressBar.className = 'progress-bar';
+            const progressFill = document.createElement('div');
+            progressFill.className = 'progress-fill';
+            progressFill.id = `bar-${habit.id}`;
+            progressFill.style.width = stats.progress + '%';
+            progressBar.appendChild(progressFill);
+            progressBarCell.appendChild(progressBar);
+            grid.appendChild(progressBarCell);
+        });
+
+        // Daily progress row
+        const dailyProgressLabel = document.createElement('div');
+        dailyProgressLabel.className = 'cell daily-progress-label';
+        dailyProgressLabel.textContent = 'Daily Progress';
+        grid.appendChild(dailyProgressLabel);
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dailyProgress = calculateDailyProgress(day);
+            const dailyCell = document.createElement('div');
+            dailyCell.className = 'cell daily-progress-cell';
+            dailyCell.id = `daily-${day}`;
+
+            if (dailyProgress <= 50) dailyCell.classList.add('low');
+            else if (dailyProgress <= 75) dailyCell.classList.add('medium');
+            else dailyCell.classList.add('high');
+
+            dailyCell.textContent = dailyProgress + '%';
+            grid.appendChild(dailyCell);
+        }
+
+        for (let i = 0; i < 3; i++) {
+            const emptyCell = document.createElement('div');
+            emptyCell.className = 'cell';
+            grid.appendChild(emptyCell);
+        }
+    }
+
+    // ============================================
+    // UI UPDATE
+    // ============================================
+
+    function updateUI() {
+        currentHabits.forEach(habit => {
+            for (let day = 1; day <= daysInMonth; day++) {
+                const checkbox = document.getElementById(`habit-${habit.id}-day-${day}`);
+                if (checkbox) {
+                    checkbox.checked = habitState[habit.id] ? habitState[habit.id][day] : false;
+                    const cell = checkbox.parentElement;
+                    if (habitState[habit.id] && habitState[habit.id][day]) {
+                        cell.classList.add('checked');
+                    } else {
+                        cell.classList.remove('checked');
+                    }
+                }
+            }
+
+            const stats = calculateHabitStats(habit.id);
+            const completedEl = document.getElementById(`completed-${habit.id}`);
+            const progressEl = document.getElementById(`progress-${habit.id}`);
+            const barEl = document.getElementById(`bar-${habit.id}`);
+
+            if (completedEl) completedEl.textContent = stats.completed;
+            if (progressEl) progressEl.textContent = stats.progress + '%';
+            if (barEl) barEl.style.width = stats.progress + '%';
+        });
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dailyProgress = calculateDailyProgress(day);
+            const dailyEl = document.getElementById(`daily-${day}`);
+
+            if (dailyEl) {
+                dailyEl.textContent = dailyProgress + '%';
+                dailyEl.className = 'cell daily-progress-cell';
+
+                if (dailyProgress <= 50) dailyEl.classList.add('low');
+                else if (dailyProgress <= 75) dailyEl.classList.add('medium');
+                else dailyEl.classList.add('high');
+            }
+        }
+
+        const overallProgress = calculateOverallProgress();
+        document.getElementById('overallProgress').textContent = `Overall: ${overallProgress}%`;
+        document.getElementById('motivationalMsg').textContent = getMotivationalMessage(overallProgress);
+
+        drawChart();
+    }
+
+    // ============================================
+    // CHART DRAWING
+    // ============================================
+
+    function drawChart() {
+        const canvas = document.getElementById('trendChart');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.parentElement.offsetWidth;
+        canvas.height = 300;
+
+        const width = canvas.width;
+        const height = canvas.height;
+        const padding = 40;
+        const chartWidth = width - padding * 2;
+        const chartHeight = height - padding * 2;
+
+        ctx.clearRect(0, 0, width, height);
+
+        const dataPoints = [];
+        for (let day = 1; day <= daysInMonth; day++) {
+            const progress = calculateDailyProgress(day);
+            dataPoints.push(progress);
+        }
+
+        // Draw axes
+        ctx.strokeStyle = '#dee2e6';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padding, padding);
+        ctx.lineTo(padding, height - padding);
+        ctx.lineTo(width - padding, height - padding);
+        ctx.stroke();
+
+        // Draw y-axis labels
+        ctx.fillStyle = '#666';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'right';
+        for (let i = 0; i <= 100; i += 25) {
+            const y = height - padding - (i / 100) * chartHeight;
+            ctx.fillText(i, padding - 10, y + 4);
+        }
+
+        // Draw x-axis labels
+        ctx.textAlign = 'center';
+        for (let i = 1; i <= daysInMonth; i += 5) {
+            const x = padding + ((i - 1) / (daysInMonth - 1)) * chartWidth;
+            ctx.fillText(i, x, height - padding + 20);
+        }
+
+        // Draw area chart
+        if (dataPoints.length > 0) {
+            ctx.beginPath();
+            ctx.moveTo(padding, height - padding);
+
+            dataPoints.forEach((value, index) => {
+                const x = padding + (index / (daysInMonth - 1)) * chartWidth;
+                const y = height - padding - (value / 100) * chartHeight;
+                ctx.lineTo(x, y);
+            });
+
+            ctx.lineTo(padding + chartWidth, height - padding);
+            ctx.closePath();
+
+            const gradient = ctx.createLinearGradient(0, padding, 0, height - padding);
+            gradient.addColorStop(0, 'rgba(40, 167, 69, 0.3)');
+            gradient.addColorStop(1, 'rgba(40, 167, 69, 0.05)');
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // Draw line
+            ctx.beginPath();
+            dataPoints.forEach((value, index) => {
+                const x = padding + (index / (daysInMonth - 1)) * chartWidth;
+                const y = height - padding - (value / 100) * chartHeight;
+                if (index === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.strokeStyle = '#28a745';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw points
+            ctx.fillStyle = '#28a745';
+            dataPoints.forEach((value, index) => {
+                const x = padding + (index / (daysInMonth - 1)) * chartWidth;
+                const y = height - padding - (value / 100) * chartHeight;
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+    }
+
+    // ============================================
+    // CLEAR DATA
+    // ============================================
+
+    function clearAll() {
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const choice = confirm(`What would you like to clear?\n\nOK = Clear ${months[currentMonth]} ${currentYear}\n\nCancel = Clear All Data`);
+
+        if (choice === true) {
+            initializeState();
+            saveHabitState();
+            currentHabits = JSON.parse(JSON.stringify(defaultHabits));
+            saveHabitNames();
+            generateGrid();
+            updateUI();
+            alert(`${months[currentMonth]} ${currentYear} cleared!`);
+        } else {
+            const confirmAll = confirm('This will delete ALL saved data (Habits, Names, Checkboxes)! Are you sure? This cannot be undone.');
+            if (confirmAll) {
+                const keys = Object.keys(localStorage);
+                keys.forEach(key => {
+                    if (key.startsWith('habitState-v1-') || key.startsWith('habitNames-v1-')) {
+                        localStorage.removeItem(key);
+                    }
+                });
+                initializeHabits();
+                initializeState();
+                generateGrid();
+                updateUI();
+                alert('All data deleted! Fresh start!');
+            }
+        }
+    }
+
+    // ============================================
+    // INITIALIZATION
+    // ============================================
+
+    function populateYearSelector() {
+        const yearInput = document.getElementById('yearSelector');
+        const currentYearVal = new Date().getFullYear();
+        yearInput.value = currentYearVal;
+        currentYear = currentYearVal;
+        document.getElementById('monthSelector').value = new Date().getMonth();
+        currentMonth = new Date().getMonth();
+    }
+
+    function changeYear() {
+        const inputValue = document.getElementById('yearSelector').value;
+        if (inputValue && inputValue >= 1900 && inputValue <= 2100) {
+            currentYear = parseInt(inputValue);
+            initializeHabits();
+            loadHabitState();
+            generateGrid();
+            updateUI();
+            drawChart();
+        }
+    }
+
+    function changeMonth() {
+        currentMonth = parseInt(document.getElementById('monthSelector').value);
+        initializeHabits();
+        loadHabitState();
+        generateGrid();
+        updateUI();
+        drawChart();
+    }
+
+    function init() {
+        populateYearSelector();
+        initializeHabits();
+        loadHabitState();
+        generateGrid();
+        updateUI();
+
+        document.getElementById('clearBtn').addEventListener('click', clearAll);
+        document.getElementById('monthSelector').addEventListener('change', changeMonth);
+        document.getElementById('yearSelector').addEventListener('input', changeYear);
+        document.getElementById('yearSelector').addEventListener('change', changeYear);
+        window.addEventListener('resize', drawChart);
+    }
+
+    // ============================================
+    // CHECK LOGIN ON PAGE LOAD
+    // ============================================
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+        if (isLoggedIn === 'true') {
+            showDashboard();
+        }
+    });
+</script>
+
 </body>
 </html>
